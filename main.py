@@ -15,9 +15,9 @@ screen = pygame.display.set_mode((800, 800))
 meshes = read_obj("./assets/Curve_1.obj")
 
 SCALE_FACTOR = 10
-SCALE_STEP = 2
-MAX_SCALE_FACTOR = 20
-MIN_SCALE_FACTOR = 5
+SCALE_STEP = 4
+MAX_SCALE_FACTOR = 30
+MIN_SCALE_FACTOR = 1
 X_OFFSET = 400 / SCALE_FACTOR
 Y_OFFSET = 400 / SCALE_FACTOR
 
@@ -41,6 +41,12 @@ while run:
     for v in meshes.vertices:
         pos = ((v.value[0] + X_OFFSET) * SCALE_FACTOR, ((v.value[1] * -1) + Y_OFFSET) * SCALE_FACTOR)
         pygame.draw.circle(screen, (0, 0, 0), pos, 5)
+
+    for c in meshes.connections:
+        pos1 = ((meshes.vertices[c[0] - 1].value[0] + X_OFFSET) * SCALE_FACTOR, (meshes.vertices[c[0] - 1].value[1] + Y_OFFSET) * SCALE_FACTOR)
+        pos2 = ((meshes.vertices[c[1] - 1].value[0] + X_OFFSET) * SCALE_FACTOR, (meshes.vertices[c[1] - 1].value[1] + Y_OFFSET) * SCALE_FACTOR)
+        pygame.draw.line(screen, (0, 0, 0), pos1, pos2, 3)
+
 
     pygame.display.update()
 
