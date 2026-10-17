@@ -12,7 +12,7 @@ from ObjectReader import read_obj
 pygame.init()
 screen = pygame.display.set_mode((800, 800))
 
-meshes = read_obj("./assets/Curve_1.obj")
+mesh_list = [read_obj("./assets/Curve_1.obj")]
 
 SCALE_FACTOR = 10
 SCALE_STEP = 4
@@ -38,14 +38,16 @@ while run:
 
     screen.fill((255, 255, 255))
 
-    for v in meshes.vertices:
-        pos = ((v.value[0] + X_OFFSET) * SCALE_FACTOR, ((v.value[1] * -1) + Y_OFFSET) * SCALE_FACTOR)
-        pygame.draw.circle(screen, (0, 0, 0), pos, 5)
+    for mesh in mesh_list:
+        for i in range(0, len(mesh.vertices)):
+            pos = ((mesh.vertices[i].value[0] + X_OFFSET) * SCALE_FACTOR, ((mesh.vertices[i].value[1] * -1) + Y_OFFSET) * SCALE_FACTOR)
+            # inverse transform: mesh.vertices[i].value[0], pos[0] / SCALE_FACTOR - X_OFFSET
+            pygame.draw.circle(screen, (0, 0, 0), pos, 5)
 
-    for c in meshes.connections:
-        pos1 = ((meshes.vertices[c[0] - 1].value[0] + X_OFFSET) * SCALE_FACTOR, (meshes.vertices[c[0] - 1].value[1] + Y_OFFSET) * SCALE_FACTOR)
-        pos2 = ((meshes.vertices[c[1] - 1].value[0] + X_OFFSET) * SCALE_FACTOR, (meshes.vertices[c[1] - 1].value[1] + Y_OFFSET) * SCALE_FACTOR)
-        pygame.draw.line(screen, (0, 0, 0), pos1, pos2, 3)
+        for c in mesh.connections:
+            pos1 = ((mesh.vertices[c[0] - 1].value[0] + X_OFFSET) * SCALE_FACTOR, ((mesh.vertices[c[0] - 1].value[1] * -1) + Y_OFFSET) * SCALE_FACTOR)
+            pos2 = ((mesh.vertices[c[1] - 1].value[0] + X_OFFSET) * SCALE_FACTOR, ((mesh.vertices[c[1] - 1].value[1] * -1) + Y_OFFSET) * SCALE_FACTOR)
+            pygame.draw.line(screen, (0, 0, 0), pos1, pos2, 3)
 
 
     pygame.display.update()
