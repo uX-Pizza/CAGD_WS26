@@ -15,7 +15,7 @@ def scalar_multiplication(operand1, operand2):
 
 
 def scalar_division(operand1, operand2):
-    if type(operand2) == int or type(operand2) == float: # scalar multiplication
+    if type(operand2) == int or type(operand2) == float: # scalar division
         if operand1.is_vector():
             return [x / operand2 for x in operand1.value]
         else:
