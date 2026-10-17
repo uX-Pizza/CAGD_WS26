@@ -1,8 +1,5 @@
-from asyncio import timeout
-
 import pygame
 from pygame.locals import *
-from pygame import freetype
 from sys import exit
 import math
 
@@ -29,6 +26,7 @@ POINT_RADIUS = 5
 BACKGROUND_COLOR = (255, 255, 255)
 POINT_COLOR = (0, 0, 0)
 SELECTED_COLOR = (255, 0, 0)
+CONNECTION_CLICKSPOT_RADIUS = 10
 
 
 
