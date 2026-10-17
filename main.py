@@ -1,0 +1,37 @@
+from asyncio import timeout
+
+import pygame
+from pygame.locals import *
+from pygame import freetype
+from sys import exit
+
+from ObjectReader import read_obj
+
+
+
+pygame.init()
+screen = pygame.display.set_mode((800, 800))
+
+meshes = read_obj("./assets/Curve_1.obj")
+SCALE_FACTOR = 10
+X_OFFSET = 400 / SCALE_FACTOR
+Y_OFFSET = 400 / SCALE_FACTOR
+
+
+
+run = True
+while run:
+    for event in pygame.event.get():
+        if event.type == QUIT:
+            run = False
+
+    screen.fill((255, 255, 255))
+
+    for v in meshes.vertices:
+        pos = ((v.value[0] + X_OFFSET) * SCALE_FACTOR, ((v.value[1] * -1) + Y_OFFSET) * SCALE_FACTOR)
+        pygame.draw.circle(screen, (0, 0, 0), pos, 5)
+
+    pygame.display.update()
+
+pygame.quit()
+exit()
