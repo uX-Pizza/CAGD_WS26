@@ -16,6 +16,8 @@ def read_obj(path):
                     face = list(map(int, line[2:].strip().split()))
                     for i in range(1, len(face)):
                         connections.append((face[i - 1], face[i]))
+                    if len(face) > 2:
+                        connections.append((face[-1], face[0]))
 
         return Mesh(vertices, connections)
 
