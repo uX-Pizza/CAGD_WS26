@@ -37,7 +37,7 @@ def read_obj(path):
                 elif parts[0] == "parm":
                     parm = [float(x) for x in parts[1:]]
 
-        return Mesh(vertices, connections, deg, curv, parm)
+        return Mesh(vertices, connections, deg, curv, parm, cstype)
 
     except FileNotFoundError:
          print(f"{path} not found")
