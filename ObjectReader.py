@@ -28,15 +28,14 @@ def read_obj(path):
                         connections.append((face[i - 1], face[i]))
                     if len(face) > 2:
                         connections.append((face[-1], face[0]))
-                elif (parts[0] == "cstype"):
+                elif parts[0] == "cstype":
                     cstype = parts[1]
-                elif (parts[0] == "deg"):
+                elif parts[0] == "deg":
                     deg = parts[1]
                 elif parts[0] == "curv":
                     curv = [float(x) if '.' in x else int(x) for x in parts[1:]]
                 elif parts[0] == "parm":
                     parm = [float(x) for x in parts[1:]]
-                
 
         return Mesh(vertices, connections, deg, curv, parm)
 
@@ -44,6 +43,8 @@ def read_obj(path):
          print(f"{path} not found")
     except:
          print("An Error occurred")
+
+
 
 if __name__ == "__main__":
     filename = "./assets/Curve_1.obj"

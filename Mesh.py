@@ -1,20 +1,20 @@
 class Mesh:
-    def __init__(self, vertices=None, connections=None, deg=None, curv=None, parm =None):
+    def __init__(self, vertices=None, connections=None, deg=None, curve=None, parm =None):
         if connections is None:
             connections = []
         if vertices is None:
             vertices = []
         if deg is None:
             deg = 0
-        if curv is None:
-            curv = []
+        if curve is None:
+            curve = []
         if parm is None:
             parm = []
 
         self.vertices = vertices
         self.connections = connections
-        self.deg = deg # Degree of curv
-        self.curv = curv
+        self.deg = deg # Degree of curve
+        self.curv = curve
         self.parm = parm
 
     def __str__(self):
