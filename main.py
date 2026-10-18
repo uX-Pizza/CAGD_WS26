@@ -12,6 +12,10 @@ screen = pygame.display.set_mode((800, 800))
 drawn_positions = []
 selected_mesh = None
 selected_vertex = None
+r_mouse_pressed = False
+last_mouse_pos = None
+x_offset = 400
+y_offset = 400
 
 mesh_list = [read_obj("./assets/Curve_1.obj")]
 
@@ -19,8 +23,6 @@ SCALE_FACTOR = 10
 SCALE_STEP = 1.75
 MAX_SCALE_FACTOR = 30.0
 MIN_SCALE_FACTOR = 1.0
-X_OFFSET = 400
-Y_OFFSET = 400
 
 POINT_RADIUS = 5
 BACKGROUND_COLOR = (255, 255, 255)
@@ -45,6 +47,7 @@ while run:
                 SCALE_FACTOR = min(MAX_SCALE_FACTOR, SCALE_FACTOR * SCALE_STEP)
             if event.key == K_MINUS:
                 SCALE_FACTOR = max(MIN_SCALE_FACTOR, SCALE_FACTOR / SCALE_STEP)
+
         mouse_buttons = pygame.mouse.get_pressed()
         if mouse_buttons[0]:
             for i in range(0, len(drawn_positions)):
@@ -57,19 +60,33 @@ while run:
                     selected_mesh = i
                     selected_vertex = min_index
 
+        if not mouse_buttons[2]:
+            if r_mouse_pressed:
+                r_mouse_pressed = False
+        else:
+            if not r_mouse_pressed:
+                r_mouse_pressed = True
+            else:
+                x_diff = pygame.mouse.get_pos()[0] - last_mouse_pos[0]
+                y_diff = pygame.mouse.get_pos()[1] - last_mouse_pos[1]
+                x_offset += x_diff
+                y_offset += y_diff
+            last_mouse_pos = pygame.mouse.get_pos()
+
+
     screen.fill(BACKGROUND_COLOR)
 
     drawn_positions = []
     for m in range(0, len(mesh_list)):
         for c in mesh_list[m].connections:
-            pos1 = (mesh_list[m].vertices[c[0] - 1].value[0] * SCALE_FACTOR + X_OFFSET, (mesh_list[m].vertices[c[0] - 1].value[1] * -1) * SCALE_FACTOR + Y_OFFSET)
-            pos2 = (mesh_list[m].vertices[c[1] - 1].value[0] * SCALE_FACTOR + X_OFFSET, (mesh_list[m].vertices[c[1] - 1].value[1] * -1) * SCALE_FACTOR + Y_OFFSET)
+            pos1 = (mesh_list[m].vertices[c[0] - 1].value[0] * SCALE_FACTOR + x_offset, (mesh_list[m].vertices[c[0] - 1].value[1] * -1) * SCALE_FACTOR + y_offset)
+            pos2 = (mesh_list[m].vertices[c[1] - 1].value[0] * SCALE_FACTOR + x_offset, (mesh_list[m].vertices[c[1] - 1].value[1] * -1) * SCALE_FACTOR + y_offset)
             pygame.draw.line(screen, POINT_COLOR, pos1, pos2, 3)
 
 
         mesh_positions = []
         for i in range(0, len(mesh_list[m].vertices)):
-            pos = (mesh_list[m].vertices[i].value[0] * SCALE_FACTOR + X_OFFSET, (mesh_list[m].vertices[i].value[1] * -1) * SCALE_FACTOR + Y_OFFSET)
+            pos = (mesh_list[m].vertices[i].value[0] * SCALE_FACTOR + x_offset, (mesh_list[m].vertices[i].value[1] * -1) * SCALE_FACTOR + y_offset)
             # inverse transform: mesh.vertices[i].value[0], pos[0] / SCALE_FACTOR - X_OFFSET
             if m == selected_mesh and i == selected_vertex:
                 pygame.draw.circle(screen, SELECTED_COLOR, pos, POINT_RADIUS)
