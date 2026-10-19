@@ -42,6 +42,9 @@ def euclidean_distance(a: tuple, b: tuple):
 
 run = True
 while run:
+    """
+    -------------------------EVENTS-------------------------
+    """
     for event in pygame.event.get():
         if event.type == QUIT:
             run = False
@@ -89,6 +92,9 @@ while run:
             last_mouse_pos = pygame.mouse.get_pos()
 
 
+    """
+    -------------------------DRAWING-------------------------
+    """
     screen.fill(BACKGROUND_COLOR)
 
     drawn_positions = []
@@ -107,7 +113,6 @@ while run:
             else:
                 pygame.draw.circle(screen, POINT_COLOR, pos, POINT_RADIUS)
             mesh_positions.append(list(pos))
-
         drawn_positions.append(mesh_positions)
 
     pygame.display.update()
