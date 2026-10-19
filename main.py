@@ -4,6 +4,8 @@ from sys import exit
 import math
 
 from ObjectReader import read_obj
+from CartesianElements import Element
+from Mesh import Mesh
 
 
 
@@ -12,12 +14,13 @@ screen = pygame.display.set_mode((800, 800))
 drawn_positions = []
 selected_mesh = None
 selected_vertex = None
+l_mouse_pressed = False
 r_mouse_pressed = False
 last_mouse_pos = None
 x_offset = 400
 y_offset = 400
 
-mesh_list = [read_obj("./assets/Curve_1.obj")]
+mesh_list = [read_obj("./assets/Curve_1.obj"), Mesh([Element([3, 0, 1])])]
 
 SCALE_FACTOR = 10
 SCALE_STEP = 1.75
@@ -50,15 +53,27 @@ while run:
 
         mouse_buttons = pygame.mouse.get_pressed()
         if mouse_buttons[0]:
-            for i in range(0, len(drawn_positions)):
-                mouse_pos = pygame.mouse.get_pos()
-                distances = [euclidean_distance(mouse_pos, x) for x in drawn_positions[i]]
-                min_distance = min(distances)
-                min_index = distances.index(min_distance)
-                if min_distance <= POINT_RADIUS * 2:
-                    print(f"selected mesh {i}, vertex {min_index}")
-                    selected_mesh = i
-                    selected_vertex = min_index
+            if not l_mouse_pressed:
+                for i in range(0, len(drawn_positions)):
+                    mouse_pos = pygame.mouse.get_pos()
+                    distances = [euclidean_distance(mouse_pos, x) for x in drawn_positions[i]]
+                    min_distance = min(distances)
+                    min_index = distances.index(min_distance)
+                    if min_distance <= POINT_RADIUS * 2:
+                        print(f"selected mesh {i}, vertex {min_index}")
+                        selected_mesh = i
+                        selected_vertex = min_index
+                l_mouse_pressed = True
+            else:
+                x_diff = pygame.mouse.get_pos()[0] - last_mouse_pos[0]
+                y_diff = pygame.mouse.get_pos()[1] - last_mouse_pos[1]
+                screen_pos = drawn_positions[selected_mesh][selected_vertex]
+                screen_pos[0] += x_diff
+                screen_pos[1] += y_diff
+                mesh_list[selected_mesh].vertices[selected_vertex].value = [(drawn_positions[selected_mesh][selected_vertex][0] - x_offset) / SCALE_FACTOR, (((drawn_positions[selected_mesh][selected_vertex][1]) - y_offset) / SCALE_FACTOR) * -1, 1]
+            last_mouse_pos = pygame.mouse.get_pos()
+        elif l_mouse_pressed:
+            l_mouse_pressed = False
 
         if not mouse_buttons[2]:
             if r_mouse_pressed:
@@ -87,12 +102,11 @@ while run:
         mesh_positions = []
         for i in range(0, len(mesh_list[m].vertices)):
             pos = (mesh_list[m].vertices[i].value[0] * SCALE_FACTOR + x_offset, (mesh_list[m].vertices[i].value[1] * -1) * SCALE_FACTOR + y_offset)
-            # inverse transform: mesh.vertices[i].value[0], pos[0] / SCALE_FACTOR - X_OFFSET
             if m == selected_mesh and i == selected_vertex:
                 pygame.draw.circle(screen, SELECTED_COLOR, pos, POINT_RADIUS)
             else:
                 pygame.draw.circle(screen, POINT_COLOR, pos, POINT_RADIUS)
-            mesh_positions.append(pos)
+            mesh_positions.append(list(pos))
 
         drawn_positions.append(mesh_positions)
 
