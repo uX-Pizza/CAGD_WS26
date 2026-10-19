@@ -67,7 +67,7 @@ while run:
                         selected_mesh = i
                         selected_vertex = min_index
                 l_mouse_pressed = True
-            else:
+            elif selected_mesh is not None and selected_vertex is not None:
                 x_diff = pygame.mouse.get_pos()[0] - last_mouse_pos[0]
                 y_diff = pygame.mouse.get_pos()[1] - last_mouse_pos[1]
                 screen_pos = drawn_positions[selected_mesh][selected_vertex]
