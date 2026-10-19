@@ -45,6 +45,11 @@ def create_mesh(p):
     mesh_list.append(Mesh([Element(p)]))
 
 
+def create_vertex(mesh, p):
+    p = [(p[0] - x_offset) / SCALE_FACTOR, (((p[1]) - y_offset) / SCALE_FACTOR) * -1, 1]
+    mesh_list[mesh].vertices.append(Element(p))
+
+
 
 run = True
 while run:
@@ -62,6 +67,9 @@ while run:
             if event.key == K_m:
                 create_mesh(pygame.mouse.get_pos())
                 print(mesh_list)
+            if event.key == K_n:
+                if selected_mesh is not None:
+                    create_vertex(selected_mesh, pygame.mouse.get_pos())
 
         mouse_buttons = pygame.mouse.get_pressed()
         if mouse_buttons[0]:
