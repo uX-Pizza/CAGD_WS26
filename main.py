@@ -39,6 +39,12 @@ def euclidean_distance(a: tuple, b: tuple):
     return math.sqrt((b[0] - a[0])**2 + (b[1] - a[1])**2)
 
 
+# create new mesh at position (screen coordinates)
+def create_mesh(p):
+    p = [(p[0] - x_offset) / SCALE_FACTOR, (((p[1]) - y_offset) / SCALE_FACTOR) * -1, 1]
+    mesh_list.append(Mesh([Element(p)]))
+
+
 
 run = True
 while run:
@@ -53,6 +59,9 @@ while run:
                 SCALE_FACTOR = min(MAX_SCALE_FACTOR, SCALE_FACTOR * SCALE_STEP)
             if event.key == K_MINUS:
                 SCALE_FACTOR = max(MIN_SCALE_FACTOR, SCALE_FACTOR / SCALE_STEP)
+            if event.key == K_m:
+                create_mesh(pygame.mouse.get_pos())
+                print(mesh_list)
 
         mouse_buttons = pygame.mouse.get_pressed()
         if mouse_buttons[0]:
