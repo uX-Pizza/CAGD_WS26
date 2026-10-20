@@ -1,3 +1,5 @@
+# TODO: Implement calculations for vectors of different dimensions
+
 import warnings
 import math
 
@@ -30,25 +32,25 @@ def dot_product(operand1, operand2):
         return sum([math.prod(x) for x in zip(operand1.value, operand2.value)])
     else:
         warnings.warn("Incompatible types for dot product")
-    return []
+    return 0
 
 
 def cross_product(operand1, operand2):
     if type(operand1) == Element and type(operand2) == Element:
         if len(operand1.value) == 4 and len(operand2.value) == 4:
             if operand1.is_vector() and operand2.is_vector():
-                return [operand1.value[2] * operand2.value[3] - operand1.value[3] * operand2.value[2],
-                        operand1.value[3] * operand2.value[1] - operand1.value[1] * operand2.value[3],
-                        operand1.value[1] * operand2.value[2] - operand1.value[2] * operand2.value[1],
+                return Element([operand1.value[1] * operand2.value[2] - operand1.value[2] * operand2.value[1],
+                        operand1.value[2] * operand2.value[0] - operand1.value[0] * operand2.value[2],
+                        operand1.value[0] * operand2.value[1] - operand1.value[1] * operand2.value[0],
                         0
-                        ]
+                        ])
             else:
                 warnings.warn("Both operands have to be vectors")
         else:
             warnings.warn("Both operands have to be 3D vectors")
     else:
         warnings.warn("Both Operands have to be Element objects")
-    return []
+    return Element([])
 
 
 
@@ -66,40 +68,44 @@ class Element:
         if type(other) == Element:
             if (self.is_vector() and other.is_vector()) or (self.is_point() and other.is_vector()):
                 for i in range(0, len(self.value)):
-                    return [sum(x) for x in zip(self.value, other.value)]
+                    return Element([sum(x) for x in zip(self.value, other.value)])
             else:
                 warnings.warn("Incorrect combination of vectors and points for addition")
         else:
             warnings.warn("Both Operands have to be Element objects")
-        return []
+        return Element([])
 
 
     def __sub__(self, other):
         if type(other) == Element:
             if (self.value[-1] == other.value[-1]) or (self.is_point() and other.is_vector()):
                 for i in range(0, len(self.value)):
-                    return [sum(x) for x in zip(self.value, scalar_multiplication(other, -1))]
+                    return Element([sum(x) for x in zip(self.value, scalar_multiplication(other, -1))])
             else:
                 warnings.warn("Incorrect combination of vectors and points for subtraction")
         else:
             warnings.warn("Both Operands have to be Element objects")
-        return []
+        return Element([])
 
 
     def __mul__(self, other):
-        return scalar_multiplication(self, other)
+        return Element(scalar_multiplication(self, other))
 
 
     def __rmul__(self, other):
-        return scalar_multiplication(self, other)
+        return Element(scalar_multiplication(self, other))
 
 
     def __truediv__(self, other):
-        return scalar_division(self, other)
+        return Element(scalar_division(self, other))
 
 
     def __rtruediv__(self, other):
-        return scalar_division(self, other)
+        return Element(scalar_division(self, other))
+
+
+    def __str__(self):
+        return str(self.value)
 
 
     def is_point(self):
