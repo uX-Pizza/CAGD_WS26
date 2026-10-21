@@ -56,6 +56,10 @@ def create_vertex(mesh, p):
     mesh_list[mesh].vertices.append(Element(p))
 
 
+def delete_connection(mesh, connection):
+    mesh_list[mesh].connections.pop(connection)
+
+
 
 run = True
 while run:
@@ -79,6 +83,10 @@ while run:
                 if selected_mesh is not None and selected_vertex is not None:
                     new_connection_active = not new_connection_active
                     new_connection_start = [selected_mesh, selected_vertex]
+            if event.key == K_BACKSPACE:
+                if selected_mesh is not None and selected_connection is not None:
+                    delete_connection(selected_mesh, selected_connection)
+                    print("delete")
 
 
         mouse_buttons = pygame.mouse.get_pressed()
@@ -122,12 +130,11 @@ while run:
 
                 if new_connection_active and selected_mesh == new_connection_start[0] and selected_vertex != new_connection_start[1]:
                     conn = (new_connection_start[1] + 1, selected_vertex + 1)
-                    rconn = (selected_vertex + 1, new_connection_start[1] + 1)
-                    if conn not in mesh_list[selected_mesh].connections and rconn not in mesh_list[selected_mesh].connections:
+                    if conn not in mesh_list[selected_mesh].connections and conn[::-1] not in mesh_list[selected_mesh].connections:
                         mesh_list[selected_mesh].connections.append((new_connection_start[1] + 1, selected_vertex + 1))
-                else:
-                    new_connection_start = []
-                    new_connection_active = False
+
+                new_connection_start = []
+                new_connection_active = False
 
                 l_mouse_pressed = True
             elif selected_mesh is not None and selected_vertex is not None:
