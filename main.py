@@ -12,15 +12,17 @@ from Mesh import Mesh
 pygame.init()
 screen = pygame.display.set_mode((800, 800))
 drawn_positions = []
+drawn_connections = []
 selected_mesh = None
 selected_vertex = None
+selected_connection = None
 l_mouse_pressed = False
 r_mouse_pressed = False
 last_mouse_pos = None
 x_offset = 400
 y_offset = 400
 
-mesh_list = [read_obj("./assets/Curve_1.obj"), Mesh([Element([3, 0, 1])])]
+mesh_list = [read_obj("./assets/Curve_1.obj"), Mesh([Element([3, 0, 1]), Element([1, 3, 1])], [(0, 1)])]
 
 SCALE_FACTOR = 10
 SCALE_STEP = 1.75
@@ -66,7 +68,6 @@ while run:
                 SCALE_FACTOR = max(MIN_SCALE_FACTOR, SCALE_FACTOR / SCALE_STEP)
             if event.key == K_m:
                 create_mesh(pygame.mouse.get_pos())
-                print(mesh_list)
             if event.key == K_n:
                 if selected_mesh is not None:
                     create_vertex(selected_mesh, pygame.mouse.get_pos())
@@ -74,15 +75,42 @@ while run:
         mouse_buttons = pygame.mouse.get_pressed()
         if mouse_buttons[0]:
             if not l_mouse_pressed:
+                mouse_pos = pygame.mouse.get_pos()
+                v_min_distance, c_min_distance = 0, 0
+                v_min_index, c_min_index = 0, 0
+                v_mesh, c_mesh = None, None
                 for i in range(0, len(drawn_positions)):
-                    mouse_pos = pygame.mouse.get_pos()
                     distances = [euclidean_distance(mouse_pos, x) for x in drawn_positions[i]]
-                    min_distance = min(distances)
-                    min_index = distances.index(min_distance)
-                    if min_distance <= POINT_RADIUS * 2:
-                        print(f"selected mesh {i}, vertex {min_index}")
-                        selected_mesh = i
-                        selected_vertex = min_index
+                    v_min_distance = min(distances)
+                    v_min_index = distances.index(v_min_distance)
+                    if v_min_distance <= POINT_RADIUS * 2:
+                        v_mesh = i
+                        break
+
+                for i in range(0, len(drawn_connections)):
+                    distances = [euclidean_distance(mouse_pos, x) for x in drawn_connections[i]]
+                    if len(distances) > 0:
+                        c_min_distance = min(distances)
+                        c_min_index = distances.index(c_min_distance)
+                        if c_min_distance <= CONNECTION_CLICKSPOT_RADIUS * 2:
+                            c_mesh = i
+                            break
+
+                if v_min_distance <= POINT_RADIUS * 2 and v_mesh is not None:
+                    print(f"selected mesh {v_mesh}, vertex {v_min_index}")
+                    selected_mesh = v_mesh
+                    selected_vertex = v_min_index
+                    selected_connection = None
+                elif c_min_distance <= CONNECTION_CLICKSPOT_RADIUS * 2 and c_mesh is not None:
+                    print(f"selected mesh {c_mesh}, connection {c_min_index}")
+                    selected_mesh = c_mesh
+                    selected_connection = c_min_index
+                    selected_vertex = None
+                else:
+                    selected_mesh = None
+                    selected_vertex = None
+                    selected_connection = None
+
                 l_mouse_pressed = True
             elif selected_mesh is not None and selected_vertex is not None:
                 x_diff = pygame.mouse.get_pos()[0] - last_mouse_pos[0]
@@ -115,11 +143,19 @@ while run:
     screen.fill(BACKGROUND_COLOR)
 
     drawn_positions = []
+    drawn_connections = []
     for m in range(0, len(mesh_list)):
-        for c in mesh_list[m].connections:
-            pos1 = (mesh_list[m].vertices[c[0] - 1].value[0] * SCALE_FACTOR + x_offset, (mesh_list[m].vertices[c[0] - 1].value[1] * -1) * SCALE_FACTOR + y_offset)
-            pos2 = (mesh_list[m].vertices[c[1] - 1].value[0] * SCALE_FACTOR + x_offset, (mesh_list[m].vertices[c[1] - 1].value[1] * -1) * SCALE_FACTOR + y_offset)
-            pygame.draw.line(screen, POINT_COLOR, pos1, pos2, 3)
+        mesh_connections = []
+        for i in range(0, len(mesh_list[m].connections)):
+            pos1 = (mesh_list[m].vertices[mesh_list[m].connections[i][0] - 1].value[0] * SCALE_FACTOR + x_offset, (mesh_list[m].vertices[mesh_list[m].connections[i][0] - 1].value[1] * -1) * SCALE_FACTOR + y_offset)
+            pos2 = (mesh_list[m].vertices[mesh_list[m].connections[i][1] - 1].value[0] * SCALE_FACTOR + x_offset, (mesh_list[m].vertices[mesh_list[m].connections[i][1] - 1].value[1] * -1) * SCALE_FACTOR + y_offset)
+            if m == selected_mesh and i == selected_connection:
+                pygame.draw.line(screen, SELECTED_COLOR, pos1, pos2, 3)
+            else:
+                pygame.draw.line(screen, POINT_COLOR, pos1, pos2, 3)
+            mesh_connections.append([(pos1[0] + pos2[0])/2, (pos1[1] + pos2[1])/2])
+        drawn_connections.append(mesh_connections)
+
 
 
         mesh_positions = []
