@@ -158,6 +158,9 @@ while run:
     """
     screen.fill(BACKGROUND_COLOR)
 
+    pygame.draw.line(screen, (200, 200, 200), (-10000 + x_offset, 0 + y_offset), (10000 + x_offset, 0 + y_offset), 1)
+    pygame.draw.line(screen, (200, 200, 200), (0 + x_offset, -10000 + y_offset), (0 + x_offset, 10000 + y_offset), 1)
+
     drawn_positions = []
     drawn_connections = []
     for m in range(0, len(mesh_list)):
