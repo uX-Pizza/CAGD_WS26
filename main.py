@@ -13,6 +13,8 @@ pygame.init()
 screen = pygame.display.set_mode((800, 800))
 drawn_positions = []
 drawn_connections = []
+new_connection_start = []
+new_connection_active = False
 selected_mesh = None
 selected_vertex = None
 selected_connection = None
@@ -22,7 +24,7 @@ last_mouse_pos = None
 x_offset = 400
 y_offset = 400
 
-mesh_list = [read_obj("./assets/Curve_1.obj"), Mesh([Element([3, 0, 1]), Element([1, 3, 1])], [(0, 1)])]
+mesh_list = [read_obj("./assets/Curve_1.obj"), Mesh([Element([3, 0, 1]), Element([1, 3, 1])], [(1, 2)])]
 
 SCALE_FACTOR = 10
 SCALE_STEP = 1.75
@@ -71,6 +73,11 @@ while run:
             if event.key == K_n:
                 if selected_mesh is not None:
                     create_vertex(selected_mesh, pygame.mouse.get_pos())
+            if event.key == K_c:
+                if selected_mesh is not None and selected_vertex is not None:
+                    new_connection_active = not new_connection_active
+                    new_connection_start = [selected_mesh, selected_vertex]
+
 
         mouse_buttons = pygame.mouse.get_pressed()
         if mouse_buttons[0]:
@@ -110,6 +117,15 @@ while run:
                     selected_mesh = None
                     selected_vertex = None
                     selected_connection = None
+
+                if new_connection_active and selected_mesh == new_connection_start[0] and selected_vertex != new_connection_start[1]:
+                    conn = (new_connection_start[1] + 1, selected_vertex + 1)
+                    rconn = (selected_vertex + 1, new_connection_start[1] + 1)
+                    if conn not in mesh_list[selected_mesh].connections and rconn not in mesh_list[selected_mesh].connections:
+                        mesh_list[selected_mesh].connections.append((new_connection_start[1] + 1, selected_vertex + 1))
+                else:
+                    new_connection_start = []
+                    new_connection_active = False
 
                 l_mouse_pressed = True
             elif selected_mesh is not None and selected_vertex is not None:
