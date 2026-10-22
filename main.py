@@ -31,6 +31,7 @@ SCALE_FACTOR = 10
 SCALE_STEP = 1.75
 MAX_SCALE_FACTOR = 30.0
 MIN_SCALE_FACTOR = 1.0
+GRID_STEP = 5
 
 POINT_RADIUS = 5
 BACKGROUND_COLOR = (255, 255, 255)
@@ -161,33 +162,29 @@ while run:
 
     axis_color = (200, 200, 200)
 
-    cordinate_system_size = 10000
-
-    x_start_pos = (-cordinate_system_size + x_offset, 0 + y_offset)
-    x_end_pos = (cordinate_system_size + x_offset, 0 + y_offset)
-    y_start_pos = (0 + x_offset, -cordinate_system_size + y_offset)
-    y_end_pos = (0 + x_offset, cordinate_system_size + y_offset)
-
-    x_length = (x_end_pos[0] - x_start_pos[0])
-    y_length = (y_end_pos[1] - y_start_pos[1])
-
     line_lenght = 12
+    max_world_zoom = int(400 / SCALE_FACTOR)
+    start_world = (max_world_zoom // GRID_STEP) * GRID_STEP
+    step_world = 10
 
-    for i in range(0, x_length, 50):
-        pygame.draw.line(screen, axis_color, (x_start_pos[0] + i, x_start_pos[1] + line_lenght), (x_start_pos[0] + i, x_start_pos[1] - line_lenght), 1)
-        label = str(i - cordinate_system_size)
+    pygame.draw.line(screen, (200, 200, 200), (0, y_offset), (800, y_offset), 1)
+    pygame.draw.line(screen, (200, 200, 200), (x_offset, 0), (x_offset, 800), 1)
+
+    for i in range(-start_world, start_world + 1, GRID_STEP):
+        screen_x = x_offset + (i * SCALE_FACTOR)
+        pygame.draw.line(screen, axis_color, (screen_x, y_offset + line_lenght), (screen_x, y_offset - line_lenght), 1)
+        label = str(i)
         text_surface = pygame.font.Font().render(label,True, axis_color)
-        screen.blit(text_surface, (x_start_pos[0] + i, x_start_pos[1] + line_lenght))
+        screen.blit(text_surface, (screen_x - 10, y_offset + line_lenght + 2))
 
-    for i in range(0, y_length, 50):
+    for i in range(-start_world, start_world, GRID_STEP):
         if i != 0:
-            pygame.draw.line(screen, axis_color, (y_start_pos[0] - line_lenght, y_start_pos[1] + i), (y_start_pos[0] + line_lenght, y_start_pos[1] + i), 1)
-            label = str((i - cordinate_system_size) * -1)
-            text_surface = font.render(label,True, axis_color)
-            screen.blit(text_surface, (y_start_pos[0] + 15, y_start_pos[1] + i - 7))
+            screen_y = y_offset + (i * SCALE_FACTOR * -1)
 
-    pygame.draw.line(screen, (200, 200, 200), x_start_pos, x_end_pos, 1)
-    pygame.draw.line(screen, (200, 200, 200), y_start_pos, y_end_pos, 1)
+            pygame.draw.line(screen, axis_color, (x_offset - line_lenght,  screen_y), (x_offset + line_lenght, screen_y), 1)
+            label = str( i* -1)
+            text_surface = font.render(label,True, axis_color)
+            screen.blit(text_surface, (x_offset + line_lenght + 5, screen_y - 7))
 
     drawn_positions = []
     drawn_connections = []
