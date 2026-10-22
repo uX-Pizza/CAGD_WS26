@@ -11,6 +11,7 @@ from Mesh import Mesh
 
 pygame.init()
 screen = pygame.display.set_mode((800, 800))
+font = pygame.font.Font()
 drawn_positions = []
 drawn_connections = []
 new_connection_start = []
@@ -158,8 +159,35 @@ while run:
     """
     screen.fill(BACKGROUND_COLOR)
 
-    pygame.draw.line(screen, (200, 200, 200), (-10000 + x_offset, 0 + y_offset), (10000 + x_offset, 0 + y_offset), 1)
-    pygame.draw.line(screen, (200, 200, 200), (0 + x_offset, -10000 + y_offset), (0 + x_offset, 10000 + y_offset), 1)
+    axis_color = (200, 200, 200)
+
+    cordinate_system_size = 10000
+
+    x_start_pos = (-cordinate_system_size + x_offset, 0 + y_offset)
+    x_end_pos = (cordinate_system_size + x_offset, 0 + y_offset)
+    y_start_pos = (0 + x_offset, -cordinate_system_size + y_offset)
+    y_end_pos = (0 + x_offset, cordinate_system_size + y_offset)
+
+    x_length = (x_end_pos[0] - x_start_pos[0])
+    y_length = (y_end_pos[1] - y_start_pos[1])
+
+    line_lenght = 12
+
+    for i in range(0, x_length, 50):
+        pygame.draw.line(screen, axis_color, (x_start_pos[0] + i, x_start_pos[1] + line_lenght), (x_start_pos[0] + i, x_start_pos[1] - line_lenght), 1)
+        label = str(i - cordinate_system_size)
+        text_surface = pygame.font.Font().render(label,True, axis_color)
+        screen.blit(text_surface, (x_start_pos[0] + i, x_start_pos[1] + line_lenght))
+
+    for i in range(0, y_length, 50):
+        if i != 0:
+            pygame.draw.line(screen, axis_color, (y_start_pos[0] - line_lenght, y_start_pos[1] + i), (y_start_pos[0] + line_lenght, y_start_pos[1] + i), 1)
+            label = str((i - cordinate_system_size) * -1)
+            text_surface = font.render(label,True, axis_color)
+            screen.blit(text_surface, (y_start_pos[0] + 15, y_start_pos[1] + i - 7))
+
+    pygame.draw.line(screen, (200, 200, 200), x_start_pos, x_end_pos, 1)
+    pygame.draw.line(screen, (200, 200, 200), y_start_pos, y_end_pos, 1)
 
     drawn_positions = []
     drawn_connections = []
