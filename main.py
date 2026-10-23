@@ -191,7 +191,7 @@ while run:
             screen_y = y_offset + (i * SCALE_FACTOR * -1)
 
             pygame.draw.line(screen, axis_color, (x_offset - line_length,  screen_y), (x_offset + line_length, screen_y), 1)
-            label = str( i* -1)
+            label = str(i)
             text_surface = font.render(label,True, axis_color)
             screen.blit(text_surface, (x_offset + line_length + 5, screen_y - 7))
 
