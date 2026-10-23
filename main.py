@@ -60,6 +60,17 @@ def delete_connection(mesh, connection):
     mesh_list[mesh].connections.pop(connection)
 
 
+def focus_mesh(index):
+    global x_offset, y_offset
+    coordinates = [n for one_dim in drawn_positions[index] for n in one_dim]
+    x = [x - x_offset for x in coordinates[0::2]]
+    y = [y - y_offset for y in coordinates[1::2]]
+    midpoint = [-(max(x) + min(x))/2 + 400, -(max(y) + min(y))/2 + 400]
+    print(midpoint)
+    x_offset = midpoint[0]
+    y_offset = midpoint[1]
+
+
 run = True
 while run:
     """
@@ -89,6 +100,8 @@ while run:
                     mesh_list[selected_mesh].delete_vertex(selected_vertex)
                     if len(mesh_list[selected_mesh].vertices) == 0:
                         mesh_list.pop(selected_mesh)
+            if event.key in range(49, 57):
+                focus_mesh(event.key - 49)
 
 
         mouse_buttons = pygame.mouse.get_pressed()
