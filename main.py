@@ -87,6 +87,8 @@ while run:
                     delete_connection(selected_mesh, selected_connection)
                 if selected_mesh is not None and selected_vertex is not None:
                     mesh_list[selected_mesh].delete_vertex(selected_vertex)
+                    if len(mesh_list[selected_mesh].vertices) == 0:
+                        mesh_list.pop(selected_mesh)
 
 
         mouse_buttons = pygame.mouse.get_pressed()
