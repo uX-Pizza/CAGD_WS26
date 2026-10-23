@@ -174,14 +174,14 @@ while run:
     start_world = (max_world_zoom // GRID_STEP) * GRID_STEP
     step_world = 10
 
-    pygame.draw.line(screen, axis_color, (0, y_offset), (800, y_offset), 1)
-    pygame.draw.line(screen, axis_color, (x_offset, 0), (x_offset, 800), 1)
+    pygame.draw.line(screen, (200, 200, 200), (0, y_offset), (800, y_offset), 1)
+    pygame.draw.line(screen, (200, 200, 200), (x_offset, 0), (x_offset, 800), 1)
 
     for i in range(-start_world, start_world + 1, GRID_STEP):
         screen_x = x_offset + (i * SCALE_FACTOR)
         pygame.draw.line(screen, axis_color, (screen_x, y_offset + line_length), (screen_x, y_offset - line_length), 1)
         label = str(i)
-        text_surface = pygame.font.Font().render(label,True, axis_color)
+        text_surface = font.render(label,True, axis_color)
         screen.blit(text_surface, (screen_x - 10, y_offset + line_length + 2))
 
     for i in range(-start_world, start_world, GRID_STEP):
