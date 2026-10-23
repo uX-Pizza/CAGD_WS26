@@ -174,8 +174,8 @@ while run:
     start_world = (max_world_zoom // GRID_STEP) * GRID_STEP
     step_world = 10
 
-    pygame.draw.line(screen, (200, 200, 200), (0, y_offset), (800, y_offset), 1)
-    pygame.draw.line(screen, (200, 200, 200), (x_offset, 0), (x_offset, 800), 1)
+    pygame.draw.line(screen, axis_color, (0, y_offset), (800, y_offset), 1)
+    pygame.draw.line(screen, axis_color, (x_offset, 0), (x_offset, 800), 1)
 
     for i in range(-start_world, start_world + 1, GRID_STEP):
         screen_x = x_offset + (i * SCALE_FACTOR)
