@@ -60,7 +60,6 @@ def delete_connection(mesh, connection):
     mesh_list[mesh].connections.pop(connection)
 
 
-
 run = True
 while run:
     """
@@ -86,7 +85,8 @@ while run:
             if event.key == K_BACKSPACE:
                 if selected_mesh is not None and selected_connection is not None:
                     delete_connection(selected_mesh, selected_connection)
-                    print("delete")
+                if selected_mesh is not None and selected_vertex is not None:
+                    mesh_list[selected_mesh].delete_vertex(selected_vertex)
 
 
         mouse_buttons = pygame.mouse.get_pressed()
