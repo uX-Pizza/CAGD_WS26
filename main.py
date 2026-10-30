@@ -67,8 +67,10 @@ def focus_mesh(index):
     y = [y - y_offset for y in coordinates[1::2]]
     midpoint = [-(max(x) + min(x))/2 + 400, -(max(y) + min(y))/2 + 400]
     print(midpoint)
-    x_offset = midpoint[0]
-    y_offset = midpoint[1]
+    for i in range(0, len(drawn_positions[index])):
+        drawn_positions[index][i][0] += midpoint[0] - 400
+        drawn_positions[index][i][1] += midpoint[1] - 400
+        mesh_list[index].vertices[i].value = [(drawn_positions[index][i][0] - x_offset) / SCALE_FACTOR, (((drawn_positions[index][i][1]) - y_offset) / SCALE_FACTOR) * -1, 1]
 
 
 run = True
