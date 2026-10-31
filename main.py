@@ -55,10 +55,30 @@ def create_vertex(mesh, p):
     p = [(p[0] - x_offset) / SCALE_FACTOR, (((p[1]) - y_offset) / SCALE_FACTOR) * -1, 1]
     mesh_list[mesh].vertices.append(Element(p))
 
-
 def delete_connection(mesh, connection):
     mesh_list[mesh].connections.pop(connection)
 
+def deCasteljau(mesh_index, t, iterations):
+    print("Mesh Index: ",  mesh_index)
+    mesh = mesh_list[mesh_index]
+    if -1 < t < 2:
+        relevant = list(mesh.vertices)
+        for iteration in range(iterations):
+            new_points = []
+            for vertex in range(1, len(relevant)):
+                p1 = relevant[vertex].value
+                p2 = relevant[vertex - 1].value
+                new_point = [
+                    (1-t) * p1[0] + t * p2[0],
+                    (1-t) * p1[1] + t * p2[1],
+                    1
+                ]
+
+                new_point = Element(new_point)
+                new_points.append(new_point)
+
+                mesh.vertices.append(new_point)
+            relevant = new_points
 
 run = True
 while run:
@@ -89,6 +109,9 @@ while run:
                     mesh_list[selected_mesh].delete_vertex(selected_vertex)
                     if len(mesh_list[selected_mesh].vertices) == 0:
                         mesh_list.pop(selected_mesh)
+            if event.key == K_d:
+                if selected_mesh is not None:
+                    deCasteljau(selected_mesh, 0.5,3)
 
 
         mouse_buttons = pygame.mouse.get_pressed()
