@@ -1,5 +1,3 @@
-# TODO: Implement calculations for vectors of different dimensions
-
 import warnings
 import math
 

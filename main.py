@@ -58,6 +58,19 @@ def create_vertex(mesh, p):
 def delete_connection(mesh, connection):
     mesh_list[mesh].connections.pop(connection)
 
+
+def focus_mesh(index):
+    global x_offset, y_offset
+    coordinates = [n for one_dim in drawn_positions[index] for n in one_dim]
+    x = [x - x_offset for x in coordinates[0::2]]
+    y = [y - y_offset for y in coordinates[1::2]]
+    midpoint = [-(max(x) + min(x))/2 + 400, -(max(y) + min(y))/2 + 400]
+    print(midpoint)
+    for i in range(0, len(drawn_positions[index])):
+        drawn_positions[index][i][0] += midpoint[0] - 400
+        drawn_positions[index][i][1] += midpoint[1] - 400
+        mesh_list[index].vertices[i].value = [(drawn_positions[index][i][0] - x_offset) / SCALE_FACTOR, (((drawn_positions[index][i][1]) - y_offset) / SCALE_FACTOR) * -1, 1]
+
 def deCasteljau(mesh_index, t, iterations):
     print("Mesh Index: ",  mesh_index)
     mesh = mesh_list[mesh_index]
@@ -109,6 +122,8 @@ while run:
                     mesh_list[selected_mesh].delete_vertex(selected_vertex)
                     if len(mesh_list[selected_mesh].vertices) == 0:
                         mesh_list.pop(selected_mesh)
+            if event.key in range(49, 57):
+                focus_mesh(event.key - 49)
             if event.key == K_d:
                 if selected_mesh is not None:
                     deCasteljau(selected_mesh, 0.5,3)
