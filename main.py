@@ -24,6 +24,7 @@ r_mouse_pressed = False
 last_mouse_pos = None
 x_offset = 400
 y_offset = 400
+selected_t = 0.5
 
 # mesh_list = [read_obj("./assets/Curve_1.obj"), Mesh([Element([3, 0, 1]), Element([1, 3, 1])], [(1, 2)])]
 mesh_list = [Mesh([Element([0, 10, 1]), Element([8, 8, 1]), Element([10, 0, 1])], [(1, 2), (2, 3)])]
@@ -35,6 +36,7 @@ SCALE_STEP = 1.75
 MAX_SCALE_FACTOR = 30.0
 MIN_SCALE_FACTOR = 1.0
 GRID_STEP = 5
+T_STEP = 0.1
 
 POINT_RADIUS = 5
 BACKGROUND_COLOR = (255, 255, 255)
@@ -79,8 +81,9 @@ def focus_mesh(index):
 
 def de_casteljau(mesh_index, t):
     mesh = mesh_list[mesh_index]
-    mesh.supports = []
+    # mesh.supports = []
     iterations = len(mesh_list[selected_mesh].vertices) - 1
+    support_points = []
 
     if -1 <= t <= 2:
         relevant = list(mesh.vertices)
@@ -97,9 +100,9 @@ def de_casteljau(mesh_index, t):
 
                 new_point = Element(new_point)
                 new_points.append(new_point)
-
-                mesh.supports.append(new_point)
+                support_points.append(new_point)
             relevant = new_points
+    return support_points
 
 
 run = True
@@ -136,6 +139,10 @@ while run:
             if event.key == K_d:
                 if selected_mesh is not None:
                     de_casteljau(selected_mesh, -1)
+            if event.key == K_h:
+                selected_t = max(-1, selected_t - T_STEP)
+            if event.key == K_j:
+                selected_t = min(2, selected_t + T_STEP)
 
 
         mouse_buttons = pygame.mouse.get_pressed()
@@ -275,6 +282,20 @@ while run:
                 pygame.draw.circle(screen, SELECTED_COLOR, pos, POINT_RADIUS)
             else:
                 pygame.draw.circle(screen, POINT_COLOR, pos, POINT_RADIUS)
+
+        if selected_mesh is not None:
+            for t in [x/10 for x in range(-10, 21)]: # range function for floats
+                print(t, selected_t)
+                current = de_casteljau(selected_mesh, t)
+                if t > -1:
+                    pygame.draw.line(screen, SELECTED_COLOR, (last[-1].value[0] * SCALE_FACTOR + x_offset, (last[-1].value[1] * -1) * SCALE_FACTOR + y_offset), (current[-1].value[0] * SCALE_FACTOR + x_offset, (current[-1].value[1] * -1) * SCALE_FACTOR + y_offset), 2)
+                last = current.copy()
+
+            for p in de_casteljau(selected_mesh, selected_t):
+                pos = (p.value[0] * SCALE_FACTOR + x_offset, (p.value[1] * -1) * SCALE_FACTOR + y_offset)
+                pygame.draw.circle(screen, POINT_COLOR, pos, POINT_RADIUS)
+
+
 
     pygame.display.update()
 
