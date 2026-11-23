@@ -1,5 +1,5 @@
 class Mesh:
-    def __init__(self, vertices=None, connections=None, degree=None, curve=None, parameter=None, cstype=None):
+    def __init__(self, vertices=None, connections=None, degree=None, curve=None, parameter=None, cstype=None, supports=None):
         if connections is None:
             connections = []
         if vertices is None:
@@ -12,6 +12,8 @@ class Mesh:
             parameter = []
         if cstype is None:
             cstype = "default"
+        if supports is None:
+            supports = []
 
 
         self.vertices = vertices
@@ -19,7 +21,8 @@ class Mesh:
         self.degree = degree # Degree of curve
         self.curve = curve
         self.parameter = parameter
-        self.cstype = cstype
+        self.type = cstype
+        self.supports = supports
 
 
     def __str__(self):

@@ -25,7 +25,10 @@ last_mouse_pos = None
 x_offset = 400
 y_offset = 400
 
-mesh_list = [read_obj("./assets/Curve_1.obj"), Mesh([Element([3, 0, 1]), Element([1, 3, 1])], [(1, 2)])]
+# mesh_list = [read_obj("./assets/Curve_1.obj"), Mesh([Element([3, 0, 1]), Element([1, 3, 1])], [(1, 2)])]
+mesh_list = [Mesh([Element([0, 10, 1]), Element([8, 8, 1]), Element([10, 0, 1])], [(1, 2), (2, 3)])]
+support_meshes = []
+
 
 SCALE_FACTOR = 10
 SCALE_STEP = 1.75
@@ -61,6 +64,8 @@ def delete_connection(mesh, connection):
 
 def focus_mesh(index):
     global x_offset, y_offset
+    if index >= len(mesh_list):
+        return
     coordinates = [n for one_dim in drawn_positions[index] for n in one_dim]
     x = [x - x_offset for x in coordinates[0::2]]
     y = [y - y_offset for y in coordinates[1::2]]
@@ -71,10 +76,13 @@ def focus_mesh(index):
         drawn_positions[index][i][1] += midpoint[1] - 400
         mesh_list[index].vertices[i].value = [(drawn_positions[index][i][0] - x_offset) / SCALE_FACTOR, (((drawn_positions[index][i][1]) - y_offset) / SCALE_FACTOR) * -1, 1]
 
-def deCasteljau(mesh_index, t, iterations):
-    print("Mesh Index: ",  mesh_index)
+
+def de_casteljau(mesh_index, t):
     mesh = mesh_list[mesh_index]
-    if -1 < t < 2:
+    mesh.supports = []
+    iterations = len(mesh_list[selected_mesh].vertices) - 1
+
+    if -1 <= t <= 2:
         relevant = list(mesh.vertices)
         for iteration in range(iterations):
             new_points = []
@@ -90,8 +98,9 @@ def deCasteljau(mesh_index, t, iterations):
                 new_point = Element(new_point)
                 new_points.append(new_point)
 
-                mesh.vertices.append(new_point)
+                mesh.supports.append(new_point)
             relevant = new_points
+
 
 run = True
 while run:
@@ -126,7 +135,7 @@ while run:
                 focus_mesh(event.key - 49)
             if event.key == K_d:
                 if selected_mesh is not None:
-                    deCasteljau(selected_mesh, 0.5,3)
+                    de_casteljau(selected_mesh, -1)
 
 
         mouse_buttons = pygame.mouse.get_pressed()
@@ -184,6 +193,7 @@ while run:
                 screen_pos[0] += x_diff
                 screen_pos[1] += y_diff
                 mesh_list[selected_mesh].vertices[selected_vertex].value = [(drawn_positions[selected_mesh][selected_vertex][0] - x_offset) / SCALE_FACTOR, (((drawn_positions[selected_mesh][selected_vertex][1]) - y_offset) / SCALE_FACTOR) * -1, 1]
+                mesh_list[selected_mesh].supports = []
             last_mouse_pos = pygame.mouse.get_pos()
         elif l_mouse_pressed:
             l_mouse_pressed = False
@@ -258,6 +268,13 @@ while run:
                 pygame.draw.circle(screen, POINT_COLOR, pos, POINT_RADIUS)
             mesh_positions.append(list(pos))
         drawn_positions.append(mesh_positions)
+
+        for i in range(0, len(mesh_list[m].supports)):
+            pos = (mesh_list[m].supports[i].value[0] * SCALE_FACTOR + x_offset, (mesh_list[m].supports[i].value[1] * -1) * SCALE_FACTOR + y_offset)
+            if m == selected_mesh and i == selected_vertex:
+                pygame.draw.circle(screen, SELECTED_COLOR, pos, POINT_RADIUS)
+            else:
+                pygame.draw.circle(screen, POINT_COLOR, pos, POINT_RADIUS)
 
     pygame.display.update()
 
